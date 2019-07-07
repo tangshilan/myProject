@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tsl.erp.dao.UserDao">
+    <resultMap id="resultMap" type="com.tsl.erp.model.User">
+        <id property="uId" column="uid"/>
+        <result property="userName" column="username"/>
+        <result property="password" column="password"/>
+        <result property="locked" column="locked"/>
+        <collection property="roles" ofType="com.tsl.erp.model.Role">
+            <id property="rId" column="rid"/>
+            <result property="role" column="rname"/>
+            <result property="available" column="ravailable"/>
+            <collection property="permission" ofType="com.tsl.erp.model.Permission">
+                <id property="pId" column="pid"/>
+                <result property="permission" column="pname"/>
+                <result property="type" column="ptype"/>
+                <result property="url" column="purl"/>
+                <result property="percode" column="percode"/>
+                <result property="parentid" column="parentid"/>
+                <result property="parentids" column="parentids"/>
+                <result property="sortstring" column="psortstring"/>
+                <result property="available" column="pavailable"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <select id="selectByUserName" resultMap="resultMap">
+        select u.*,r.*,p.* from user u
+        inner join user_role ur on u.uid = ur.ur_user_id
+        inner join role r on r.rid = ur.ur_role_id
+        inner join role_permission rp on r.rid = rp.rp_role_id
+        inner join permission p on p.pid = rp.rp_permission_id
+        where username = #{userName};
+    </select>
+</mapper>
