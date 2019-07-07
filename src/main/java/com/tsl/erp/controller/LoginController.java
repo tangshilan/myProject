@@ -1,5 +1,6 @@
 package com.tsl.erp.controller;
 
+import com.google.code.kaptcha.Constants;
 import com.tsl.erp.shiro.UserRealm;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -10,6 +11,8 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @Auther: Administrator
@@ -31,8 +34,18 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(String username, String password, boolean rememberMe, Model model) {
-        System.out.println("******" + rememberMe);
+    public String login(HttpServletRequest request, String username, String password,
+                        String captchaCode,boolean rememberMe, Model model) {
+
+        //校验验证码
+        //session中的验证码
+        String sessionCaptcha = (String) SecurityUtils.getSubject().getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        System.out.println("======== "+ sessionCaptcha);
+        if (null == captchaCode || !captchaCode.equalsIgnoreCase(sessionCaptcha)) {
+            model.addAttribute("msg","验证码错误！");
+            return "login";
+        }
+
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
         token.setRememberMe(rememberMe);
         Subject subject = SecurityUtils.getSubject();

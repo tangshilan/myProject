@@ -9,8 +9,24 @@
 <form action="/login" method="post">
     用户名：<input type="text" name="username"/><br/>
     密码：<input type="password" name="password"/><br/>
+
+    <div class="layui-form-item form_code">
+        <input class="layui-input"  name="captchaCode" placeholder="验证码" lay-verify="required" type="text" autocomplete="off"/>
+        <div>
+            <img type="image" src="../captcha/kaptcha.jpg" id="codeImage" onclick="chageCode()" title="图片看不清？点击重新得到验证码" style="cursor:pointer;" width="116" height="36"/>
+        </div>
+    </div>
+    <br/>
+
     记住我：<input type="checkbox" name="rememberMe"/><br/>
+
     <input type="submit" value="提交"/>
 </form>
+
+<script type="text/javascript">
+    function chageCode(){
+        document.getElementById("codeImage").src="../captcha/kaptcha.jpg?" + Math.random();
+    }
+</script>
 </body>
 </html>

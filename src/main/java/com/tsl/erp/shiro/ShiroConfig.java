@@ -37,6 +37,7 @@ public class ShiroConfig {
 
         filterMap.put("/login","anon");
         filterMap.put("/logout","anon");
+        filterMap.put("/captcha/**", "anon");
         //filterMap.put("/loginUser","anon");  // 注意loginUser的权限为authc的话，会一直跳转到login页面
         filterMap.put("/add","user");
         filterMap.put("/update","perms[root:update]");
