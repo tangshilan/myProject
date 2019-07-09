@@ -1,5 +1,6 @@
 package com.tsl.erp.model;
 
+import javax.validation.constraints.Size;
 import java.util.Set;
 
 /**
@@ -10,15 +11,20 @@ import java.util.Set;
 
 public class User {
 
+    @Size(max=36, message="用户编号过长！")
     private Integer uId; // 用戶id
 
+    @Size(max=64, message="用户名过长！")
     private String userName; // 用戶名
 
+    @Size(max=32, message="密码过长！")
     private String password; // 用戶密碼
 
+    @Size(max=1, message="用户状态输入非法！")
     private String locked; // 用戶鎖定狀態
 
-    private Set<Role> roles; // 角色名
+    @Size(max=128, message="角色名过长！")
+    private Role roles; // 角色名
 
     public Integer getuId() {
         return uId;
@@ -52,11 +58,11 @@ public class User {
         this.locked = locked;
     }
 
-    public Set<Role> getRoles() {
+    public Role getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Role roles) {
         this.roles = roles;
     }
 
@@ -67,7 +73,7 @@ public class User {
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", locked='" + locked + '\'' +
-                ", roles=" + roles +
+                ", roles=" + roles.getRole() +
                 ']';
     }
 }

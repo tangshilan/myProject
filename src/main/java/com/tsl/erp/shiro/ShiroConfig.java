@@ -33,18 +33,18 @@ public class ShiroConfig {
         shiroFilterFactoryBean.setUnauthorizedUrl("/unAuth");
         shiroFilterFactoryBean.setSuccessUrl("/index");
 
-        Map<String,String> filterMap = Maps.newLinkedHashMap();
-
-        filterMap.put("/login","anon");
-        filterMap.put("/logout","anon");
-        filterMap.put("/captcha/**", "anon");
-        //filterMap.put("/loginUser","anon");  // 注意loginUser的权限为authc的话，会一直跳转到login页面
-        filterMap.put("/add","user");
-        filterMap.put("/update","perms[root:update]");
-        filterMap.put("/index","user");
-        filterMap.put("/*","user");
-
-        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
+//        Map<String,String> filterMap = Maps.newLinkedHashMap();
+//
+//        filterMap.put("/login","anon");
+//        filterMap.put("/logout","anon");
+//        filterMap.put("/captcha/**", "anon");
+//        //filterMap.put("/loginUser","anon");  // 注意loginUser的权限为authc的话，会一直跳转到login页面
+//        filterMap.put("/add","user");
+//        filterMap.put("/update","perms[root:update]");
+//        filterMap.put("/index","user");
+//        filterMap.put("/*","user");
+//
+//        shiroFilterFactoryBean.setFilterChainDefinitionMap(filterMap);
         return shiroFilterFactoryBean;
     }
 

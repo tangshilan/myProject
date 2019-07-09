@@ -7,7 +7,7 @@
         <result property="userName" column="username"/>
         <result property="password" column="password"/>
         <result property="locked" column="locked"/>
-        <collection property="roles" ofType="com.tsl.erp.model.Role">
+        <association  property="roles" javaType="com.tsl.erp.model.Role">
             <id property="rId" column="rid"/>
             <result property="role" column="rname"/>
             <result property="available" column="ravailable"/>
@@ -22,7 +22,16 @@
                 <result property="sortstring" column="psortstring"/>
                 <result property="available" column="pavailable"/>
             </collection>
-        </collection>
+        </association >
+    </resultMap>
+
+    <resultMap id="userDataMap" type="com.tsl.erp.model.UserData">
+        <id property="uId" column="uid"/>
+        <result property="userName" column="username"/>
+        <result property="password" column="password"/>
+        <result property="locked" column="locked"/>
+       <result property="roleName" column="rname"/>
+        <result property="rId" column="rid"/>
     </resultMap>
 
     <select id="selectByUserName" resultMap="resultMap">
@@ -31,6 +40,86 @@
         inner join role r on r.rid = ur.ur_role_id
         inner join role_permission rp on r.rid = rp.rp_role_id
         inner join permission p on p.pid = rp.rp_permission_id
-        where username = #{userName};
+        where u.username = #{userName};
     </select>
+
+    <select id="selectAllUser"  resultMap="userDataMap">
+        select uid, username, password, locked, rname,rid
+        from user u
+		left join user_role ur on ur.ur_user_id = u.uid
+		left join role r on ur.ur_role_id = r.rid
+    </select>
+
+
+    <select id="selectUserByNameAndId"  resultMap="resultMap">
+        select u.*
+        from user u
+		where  u.uid = #{uId}
+		and u.username = #{userName}
+    </select>
+
+    <select id="selectUserById"  resultMap="resultMap">
+        select u.*
+        from user u
+		where  u.uid = #{uId}
+    </select>
+
+    <insert id="insertUser" parameterType="com.tsl.erp.model.UserData">
+        insert into user (uid,username,password,locked)
+        value (#{user.uId},#{user.userName},#{user.password},#{user.locked})
+    </insert>
+
+    <insert id="insertRoleUser">
+        insert into user_role (ur_user_id,ur_role_id)
+        value (#{uId},#{rId})
+    </insert>
+
+    <update id="updateAllById" parameterType="com.tsl.erp.model.UserData" >
+        update user
+        set username = #{user.userName},
+          password = #{user.password},
+          locked = #{user.locked}
+        where uid = #{user.uId}
+  </update>
+    <update id="updateByIdSelect">
+        update user
+        <set>
+            <if test="user.userName != null">
+                username = #{user.userName}
+            </if>
+            <if test="user.password">
+                password = #{user.password}
+            </if>
+            <if test="locked != null" >
+                locked = #{locked,jdbcType=CHAR},
+            </if>
+        </set>
+        where uid = #{user.uId}
+    </update>
+
+    <update id="updateRoleByUserRole">
+        update user_role ur
+        <set>
+            <if test="rId != null">
+                ur_role_id = #{rId}
+            </if>
+        </set>
+        where ur.ur_user_id = #{uId}
+    </update>
+
+    <delete id="deleteBatchByUser">
+      delete from user
+      where uid in
+      <foreach collection="array" item="uid" open="(" close=")" separator=",">
+          #{uid}
+      </foreach>
+    </delete>
+
+    <delete id="deleteBatchByUserRole">
+        delete from user_role
+        where ur_user_id in
+        <foreach collection="array" item="uid" open="(" close=")" separator=",">
+            #{uid}
+        </foreach>
+    </delete>
 </mapper>

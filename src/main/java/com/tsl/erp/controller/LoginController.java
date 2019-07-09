@@ -1,6 +1,9 @@
 package com.tsl.erp.controller;
 
 import com.google.code.kaptcha.Constants;
+import com.google.common.collect.Maps;
+import com.tsl.erp.model.User;
+import com.tsl.erp.service.UserService;
 import com.tsl.erp.shiro.UserRealm;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -8,11 +11,15 @@ import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
  * @Auther: Administrator
@@ -22,6 +29,9 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class LoginController {
+
+    @Autowired
+    UserService userService;
 
     @GetMapping("/login")
     public String login() {
@@ -34,16 +44,20 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public String login(HttpServletRequest request, String username, String password,
-                        String captchaCode,boolean rememberMe, Model model) {
+    @ResponseBody
+    public Map<String,Object> login(@RequestParam String username, @RequestParam String password,
+                                    @RequestParam(required=false)String captchaCode,@RequestParam(required=false)boolean rememberMe) {
+        Map<String,Object> map = Maps.newHashMap();
 
-        //校验验证码
-        //session中的验证码
-        String sessionCaptcha = (String) SecurityUtils.getSubject().getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
-        System.out.println("======== "+ sessionCaptcha);
-        if (null == captchaCode || !captchaCode.equalsIgnoreCase(sessionCaptcha)) {
-            model.addAttribute("msg","验证码错误！");
-            return "login";
+        if(!StringUtils.isEmpty(captchaCode)){
+            // 校验验证码    session中的验证码
+            String sessionCaptcha = (String) SecurityUtils.getSubject().getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
+            if (null == captchaCode || !captchaCode.equalsIgnoreCase(sessionCaptcha)) {
+                //model.addAttribute("msg","验证码错误！");
+                System.out.println("验证码错误!");
+                map.put("msg","captchaCode_error");
+                // return "login";
+            }
         }
 
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);
@@ -53,27 +67,35 @@ public class LoginController {
             subject.login(token);
         } catch (UnknownAccountException e) {
             System.out.println("账户不存在");
-            model.addAttribute("msg", "账户不存在");
-            return "login";
+            //model.addAttribute("msg", "账户不存在");
+            map.put("msg","account_error");
+          //  return "login";
         } catch (IncorrectCredentialsException e) {
             System.out.println("密码错误");
-            model.addAttribute("msg", "密码错误");
-            return "login";
+            //model.addAttribute("msg", "密码错误");
+            map.put("msg","password_error");
+           // return "login";
         }
-        return "index";
+       // return "index";
+        return map;
     }
 
     @RequestMapping("/logout")
     public String logout() {
         Subject subject = SecurityUtils.getSubject();
         subject.logout();
-        return "login";
+        return "redirect:/login";
     }
 
     @GetMapping({"/", "/index"})
-    public String index() {
-        return "index";
+    public String index(HttpSession session, Model model) {
+        Subject subject = SecurityUtils.getSubject();
+        User currentUser = (User)subject.getPrincipal();
+        model.addAttribute("user",currentUser);
+        return "/index";
     }
+
+
 
     /**
      * 给admin用户添加 userInfo:del 权限

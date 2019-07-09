@@ -1,5 +1,9 @@
 package com.tsl.erp.dao;
 
+import com.tsl.erp.model.Role;
+
+import java.util.List;
+
 /**
  * @Auther: Administrator
  * @Date: 2019/7/7 9:41
@@ -7,4 +11,7 @@ package com.tsl.erp.dao;
  */
 
 public interface RoleDao {
+
+     Role selectByRoleId(Integer id);
+     List<Role> selectAllRole();
 }

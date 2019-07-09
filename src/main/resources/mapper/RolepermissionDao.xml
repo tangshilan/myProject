@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tsl.erp.dao.RolePermissionDao">
+    <resultMap id="roleMap" type="com.tsl.erp.model.RolePermission">
+        <id property="id" column="rp_id"/>
+        <result property="roleId" column="rp_role_id"/>
+        <result property="permissionId" column="rp_permission_id"/>
+    </resultMap>
+    <select id="selectRolePermissionByRId" resultMap="roleMap">
+         select rp.* from role_permission rp where rp.rp_role_id = #{rId}
+    </select>
+</mapper>
