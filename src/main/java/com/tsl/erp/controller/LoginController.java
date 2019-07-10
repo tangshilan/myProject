@@ -3,6 +3,7 @@ package com.tsl.erp.controller;
 import com.google.code.kaptcha.Constants;
 import com.google.common.collect.Maps;
 import com.tsl.erp.model.User;
+import com.tsl.erp.model.UserData;
 import com.tsl.erp.service.UserService;
 import com.tsl.erp.shiro.UserRealm;
 import org.apache.shiro.SecurityUtils;
@@ -90,7 +91,7 @@ public class LoginController {
     @GetMapping({"/", "/index"})
     public String index(HttpSession session, Model model) {
         Subject subject = SecurityUtils.getSubject();
-        User currentUser = (User)subject.getPrincipal();
+        UserData currentUser = (UserData)subject.getPrincipal();
         model.addAttribute("user",currentUser);
         return "/index";
     }

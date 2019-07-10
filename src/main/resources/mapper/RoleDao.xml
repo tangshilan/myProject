@@ -6,27 +6,30 @@
         <id property="rId" column="rid"/>
         <result property="role" column="rname"/>
         <result property="available" column="ravailable"/>
-        <collection property="permission" ofType="com.tsl.erp.model.Permission">
-            <id property="pId" column="pid"/>
-            <result property="permission" column="pname"/>
-            <result property="type" column="ptype"/>
-            <result property="url" column="purl"/>
-            <result property="percode" column="percode"/>
-            <result property="parentid" column="parentid"/>
-            <result property="parentids" column="parentids"/>
-            <result property="sortstring" column="psortstring"/>
-            <result property="available" column="pavailable"/>
-        </collection>
+        <result property="permission" column="rp_permission_id"/>
     </resultMap>
 
     <select id="selectByRoleId" resultMap="roleMap">
-        select r.* ,p.* from role r
+        select r.* ,rp.* from role r
         inner join role_permission rp on r.rid = rp.rp_role_id
-        left join permission p on rp.rp_permission_id = p.pid
         where r.rid = #{rId}
     </select>
 
-    <select id="selectAllRole" resultMap="roleMap">
-        select r.* from role r
+    <select id="selectByRoleName" resultMap="roleMap">
+        select r.* ,rp.* from role r
+        left join role_permission rp on r.rid = rp.rp_role_id
+        where r.rname = #{roleName}
     </select>
+
+    <select id="selectAllRole" resultMap="roleMap">
+        select r.*,rp.* from role r
+        left join role_permission rp on r.rid = rp.rp_role_id
+    </select>
+
+    <update id="updateRole" parameterType="com.tsl.erp.model.Role">
+        update role
+        set rname = #{role.role},
+        ravailable = #{role.available}
+        where rid = #{role.rId}
+    </update>
 </mapper>

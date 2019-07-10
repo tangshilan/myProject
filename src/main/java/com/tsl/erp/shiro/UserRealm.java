@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.tsl.erp.model.Permission;
 import com.tsl.erp.model.User;
+import com.tsl.erp.model.UserData;
+import com.tsl.erp.service.PermissionService;
 import com.tsl.erp.service.UserService;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -26,6 +28,8 @@ public class UserRealm extends AuthorizingRealm {
 
     @Autowired
     UserService userService;
+    @Autowired
+    PermissionService permissionService;
 
     /**
      * @Date
@@ -37,14 +41,16 @@ public class UserRealm extends AuthorizingRealm {
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
 
         // 在上边的doGetAuthenticationInfo认证通过填充到SimpleAuthenticationInfo中身份类型
-        User user = (User)principalCollection.getPrimaryPrincipal();
+        UserData user = (UserData)principalCollection.getPrimaryPrincipal();
 
         List<String> permissions = Lists.newArrayList();
         Set<String> roles = Sets.newHashSet();
-
-        roles.add(user.getRoles().getRole());
+        roles.add(user.getRoleName());
         // 获取权限中的percode的值，如：order:add
-        for (Permission permission : user.getRoles().getPermission()){
+
+        List<Permission> permissionsList = permissionService.findPermission(user.getrId());
+        for (Permission permission : permissionsList){
+            System.out.println("==== permission_Percode:  "+ permission.getPercode());
             permissions.add(permission.getPercode());
         }
         // 查到权限数据，返回授权信息(要包括 上边的permissions)
@@ -64,32 +70,14 @@ public class UserRealm extends AuthorizingRealm {
      **/
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-
         // token是用户输入的用户名和密码,第一步从token中取出用户名
         String userName = (String)authenticationToken.getPrincipal();
-
         // 第二步：根据用户输入的username从数据库查询
-        User user = userService.findByUserName(userName);
-
+        UserData user = userService.findByUserName(userName);
         if (user == null) {
             logger.debug("该用户不存在!");
             return null;
         }
-//        String passwod = user.getPassword();
-//        ActiveUser activeUser = new ActiveUser();
-//
-//        List<Permission> permissionsList = Lists.newArrayList();
-//
-//        for(Permission permission : user.getRole().getPermission()){
-//            permissionsList.add(permission);
-//        }
-//
-//        activeUser.setUserId(user.getuId());
-//        activeUser.setUserName(user.getUserName());
-//        activeUser.setUserStatus(user.getLocked());
-//        activeUser.setRoleName(user.getRole().getRole());
-//        activeUser.setMenus(permissionsList);
-//        activeUser.setRoleStatus(user.getRole().getAvailable());
         SimpleAuthenticationInfo info = new SimpleAuthenticationInfo(user,user.getPassword(),this.getName());
         return info;
     }

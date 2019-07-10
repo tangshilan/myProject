@@ -14,7 +14,7 @@ import java.util.List;
 
 public interface UserDao {
 
-    User selectByUserName(String userName);
+    UserData selectByUserName(String userName);
     List<UserData> selectAllUser();
 
     User selectUserByNameAndId(@Param("userName")String userName, @Param("uId")Integer uId);

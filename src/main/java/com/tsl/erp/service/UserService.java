@@ -12,7 +12,7 @@ import com.tsl.erp.util.EUDataGridResult;
  */
 
 public interface UserService {
-    User findByUserName(String UserName);
+    UserData findByUserName(String UserName);
     EUDataGridResult findAllByUser(int page, int rows);
     User findUserByNameAndId(String userName, Integer rId);
     User findUserById(Integer rId);

@@ -34,7 +34,7 @@
         <result property="rId" column="rid"/>
     </resultMap>
 
-    <select id="selectByUserName" resultMap="resultMap">
+    <select id="selectByUserName" resultMap="userDataMap">
         select u.*,r.*,p.* from user u
         inner join user_role ur on u.uid = ur.ur_user_id
         inner join role r on r.rid = ur.ur_role_id

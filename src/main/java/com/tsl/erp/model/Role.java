@@ -16,7 +16,7 @@ public class Role {
 
     private String available; // 是否有效
 
-    private Set<Permission> permission; // 权限
+    private String permission; // 权限
 
     public Integer getrId() {
         return rId;
@@ -42,11 +42,11 @@ public class Role {
         this.available = available;
     }
 
-    public Set<Permission> getPermission() {
+    public String getPermission() {
         return permission;
     }
 
-    public void setPermission(Set<Permission> permission) {
+    public void setPermission(String permission) {
         this.permission = permission;
     }
 

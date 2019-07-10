@@ -1,10 +1,14 @@
 package com.tsl.erp.service.imp;
 
-import com.tsl.erp.dao.RolePermissionDao;
+import com.tsl.erp.dao.PermissionsDao;
+import com.tsl.erp.model.Permission;
 import com.tsl.erp.model.RolePermission;
 import com.tsl.erp.service.PermissionService;
+import com.tsl.erp.util.CustomResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @Auther: Administrator
@@ -15,10 +19,25 @@ import org.springframework.stereotype.Service;
 public class PermissionServiceImp implements PermissionService {
 
     @Autowired
-    RolePermissionDao rolePermissionDao;
+    PermissionsDao permissionDao;
 
     @Override
     public RolePermission findRolePermissionByRId(Integer rId) {
-        return rolePermissionDao.selectRolePermissionByRId(rId);
+        return permissionDao.selectRolePermissionByRId(rId);
+    }
+
+    @Override
+    public List<Permission> findPermission(Integer rId) {
+        return permissionDao.selectPermission(rId);
+    }
+
+    @Override
+    public CustomResult modifyRolePermissionByRole(Integer rId, String permission) {
+        int result = permissionDao.updateRolePermissionByRole(rId,permission);
+        //CustomResult customResult = new CustomResult();
+        if (result < 0){
+            return CustomResult.build(101,"修改权限信息失败");
+        }
+        return CustomResult.build(200,"修改权限信息成功");
     }
 }

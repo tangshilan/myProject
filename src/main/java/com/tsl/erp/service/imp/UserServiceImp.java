@@ -27,7 +27,7 @@ public class UserServiceImp implements UserService {
     UserDao userDao;
 
     @Override
-    public User findByUserName(String userName) {
+    public UserData findByUserName(String userName) {
         return userDao.selectByUserName(userName);
     }
 

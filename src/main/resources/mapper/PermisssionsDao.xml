@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tsl.erp.dao.PermissionsDao">
+    <resultMap id="rolePermissionMap" type="com.tsl.erp.model.RolePermission">
+        <id property="id" column="rp_id"/>
+        <result property="roleId" column="rp_role_id"/>
+        <result property="permissionId" column="rp_permission_id"/>
+    </resultMap>
+
+    <resultMap id="permissionMap" type="com.tsl.erp.model.Permission">
+        <id property="pId" column="pid"/>
+        <result property="permission" column="pname"/>
+        <result property="type" column="ptype"/>
+        <result property="url" column="purl"/>
+        <result property="percode" column="percode"/>
+        <result property="parentid" column="parentid"/>
+        <result property="parentids" column="parentids"/>
+        <result property="sortstring" column="psortstring"/>
+        <result property="available" column="pavailable"/>
+    </resultMap>
+
+    <select id="selectRolePermissionByRId" resultMap="rolePermissionMap">
+         select rp.* from role_permission rp where rp.rp_role_id = #{rId}
+    </select>
+
+    <select id="selectPermission" resultMap="permissionMap">
+         select * from permission p
+         where p.pid in (
+         select rp_permission_id
+         from role_permission
+         where  rp_role_id = #{rId}
+         )
+    </select>
+
+    <update id="updateRolePermissionByRole">
+        update role_permission
+        set rp_permission_id = #{permission}
+        where rp_role_id = #{rId}
+    </update>
+</mapper>

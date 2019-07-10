@@ -169,13 +169,9 @@
 
     function userPermissionInit(){
         var rId = $('#userRoleEditForm [name=rId]').val();
-        console.log("===== rid :"+rId);
         $.get("/permission/get_permission", {rId : rId}, function(data){
             //获得所要回显的值，此处为","分割的字符串
             var checkeds = data.permissionId;
-
-            console.log("== " + data.permissionId + " ==== " + data.roleId);
-
             if(checkeds != '' && checkeds != null){
                 //拆分为字符串数组
                 checkArray =checkeds.split(",");

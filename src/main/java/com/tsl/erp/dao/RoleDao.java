@@ -13,5 +13,11 @@ import java.util.List;
 public interface RoleDao {
 
      Role selectByRoleId(Integer id);
+
+     Role selectByRoleName(String roleName);
+
      List<Role> selectAllRole();
+
+     int updateRole(Role role);
+
 }
